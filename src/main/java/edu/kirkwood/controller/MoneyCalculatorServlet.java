@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 @WebServlet("/moneyCalculator")
@@ -14,11 +15,26 @@ public class MoneyCalculatorServlet extends HttpServlet {
     private static final int[] COIN_VALUES = {100, 50, 25, 10, 5, 1};
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Default empty arrays and operation
+        request.setAttribute("coins1", new Integer[6]);
+        request.setAttribute("coins2", new Integer[6]);
+        request.setAttribute("errorMsg1", "");
+        request.setAttribute("errorMsg2", "");
+        request.setAttribute("resultCents", null);
+        request.setAttribute("operation", "add");
+        request.setAttribute("coinNames", COIN_NAMES);
+
+        request.getRequestDispatcher("/WEB-INF/moneyCalculator.jsp").forward(request, response);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int[] coins1 = new int[6];
-        int[] coins2 = new int[6];
+        Integer[] coins1 = new Integer[6];
+        Integer[] coins2 = new Integer[6];
         String errorMsg1 = "";
         String errorMsg2 = "";
         Integer resultCents = null;
@@ -31,8 +47,8 @@ public class MoneyCalculatorServlet extends HttpServlet {
                 if (c1 == null || c1.isEmpty()) { errorMsg1 = "Enter all values"; }
                 if (c2 == null || c2.isEmpty()) { errorMsg2 = "Enter all values"; }
 
-                coins1[i] = Integer.parseInt(c1);
-                coins2[i] = Integer.parseInt(c2);
+                coins1[i] = (c1 != null && !c1.isEmpty()) ? Integer.parseInt(c1) : 0;
+                coins2[i] = (c2 != null && !c2.isEmpty()) ? Integer.parseInt(c2) : 0;
 
                 if (coins1[i] < 0 || coins2[i] < 0) {
                     throw new NumberFormatException("Negative coins not allowed");
@@ -49,6 +65,9 @@ public class MoneyCalculatorServlet extends HttpServlet {
                 default: resultCents = null;
             }
 
+            // Set selected operation
+            request.setAttribute("operation", op);
+
         } catch (NumberFormatException e) {
             if (errorMsg1.isEmpty()) errorMsg1 = "Invalid number";
             if (errorMsg2.isEmpty()) errorMsg2 = "Invalid number";
@@ -61,13 +80,14 @@ public class MoneyCalculatorServlet extends HttpServlet {
         request.setAttribute("resultCents", resultCents);
         request.setAttribute("coinNames", COIN_NAMES);
 
-        request.getRequestDispatcher("moneyCalculator.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/moneyCalculator.jsp").forward(request, response);
     }
 
-    private int coinsToCents(int[] coins) {
+    private int coinsToCents(Integer[] coins) {
         int total = 0;
-        for (int i = 0; i < coins.length; i++) total += coins[i] * COIN_VALUES[i];
+        for (int i = 0; i < coins.length; i++) {
+            total += coins[i] * COIN_VALUES[i];
+        }
         return total;
     }
 }
-

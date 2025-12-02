@@ -13,26 +13,31 @@
     <h3>First Amount</h3>
     <c:forEach var="i" begin="0" end="5">
         <label>${coinNames[i]}:</label>
-        <input type="text" name="coins1_${i}" value="${param['coins1_' + i]}"/>
+        <input type="text" name="coins1_${i}"
+               value="${coins1[i] != null ? coins1[i] : ''}"/>
         <c:if test="${not empty errorMsg1}">
             <span style="color:red">${errorMsg1}</span>
-        </c:if><br/>
+        </c:if>
+        <br/>
     </c:forEach>
 
     <h3>Second Amount</h3>
     <c:forEach var="i" begin="0" end="5">
         <label>${coinNames[i]}:</label>
-        <input type="text" name="coins2_${i}" value="${param['coins2_' + i]}"/>
+        <input type="text" name="coins2_${i}"
+               value="${coins2[i] != null ? coins2[i] : ''}"/>
         <c:if test="${not empty errorMsg2}">
             <span style="color:red">${errorMsg2}</span>
-        </c:if><br/>
+        </c:if>
+        <br/>
     </c:forEach>
 
     <h3>Operation:</h3>
     <select name="operation">
-        <option value="add" <c:if test="${param.operation == 'add'}">selected</c:if>>Add</option>
-        <option value="subtract" <c:if test="${param.operation == 'subtract'}">selected</c:if>>Subtract</option>
-    </select><br/><br/>
+        <option value="add" <c:if test="${operation == 'add'}">selected</c:if>>Add</option>
+        <option value="subtract" <c:if test="${operation == 'subtract'}">selected</c:if>>Subtract</option>
+    </select>
+    <br/><br/>
 
     <input type="submit" value="Calculate"/>
 </form>
